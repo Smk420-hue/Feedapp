@@ -1,0 +1,10 @@
+# Global ignores
+node_modules/
+.env
+.DS_Store
+npm-debug.log
+
+# Ignore backend and frontend builds
+backend/node_modules/
+frontend/node_modules/
+frontend/build/
