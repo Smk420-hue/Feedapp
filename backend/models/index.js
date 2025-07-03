@@ -1,24 +1,34 @@
-const { Sequelize } = require('sequelize');
-const dbConfig = require('../config/config.js')[process.env.NODE_ENV || 'development'];
+const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
+require('dotenv').config();
 
-
-const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
-  host: dbConfig.host,
-  dialect: dbConfig.dialect,
-  logging: false
-});
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 5432,
+    dialect: 'postgres',
+    logging: false,
+  }
+);
 
 const db = {};
 
-db.Sequelize = Sequelize;
+fs.readdirSync(__dirname)
+  .filter(file => file !== 'index.js' && file.endsWith('.js'))
+  .forEach(file => {
+    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    db[model.name] = model;
+  });
+
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) db[modelName].associate(db);
+});
+
 db.sequelize = sequelize;
-
-// Import models
-db.User = require('./user')(sequelize, Sequelize);
-db.Post = require('./post')(sequelize, Sequelize);
-
-// Define relationships
-db.User.hasMany(db.Post, { foreignKey: 'userId' });
-db.Post.belongsTo(db.User, { foreignKey: 'userId' });
+db.Sequelize = Sequelize;
 
 module.exports = db;
