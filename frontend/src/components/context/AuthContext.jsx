@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
-  const base_url = "http://localhost:5000";
+  const base_url = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchUser = async () => {
