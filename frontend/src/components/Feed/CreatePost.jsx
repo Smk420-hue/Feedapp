@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import api from '../services/api';
 
-const base_url = "import.meta.env.VITE_API_BASE_URL";
+const base_url = import.meta.env.VITE_API_BASE_URL;
 
 
 const CreatePost = ({ onCreate }) => {
