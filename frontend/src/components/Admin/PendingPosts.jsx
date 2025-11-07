@@ -15,11 +15,13 @@ const PendingPosts = () => {
 
   useEffect(() => {
     const fetchPendingPosts = async () => {
+      console.log("📡 Fetching pending posts...");
       try {
         const res = await api.get("/admin/pending-posts");
+        console.log("✅ Pending posts fetched:", res.data);
         setPendingPosts(res.data);
       } catch (err) {
-        console.error(err);
+        console.error("❌ Error fetching pending posts:", err.response?.data || err.message);
       } finally {
         setLoading(false);
       }
@@ -28,20 +30,24 @@ const PendingPosts = () => {
   }, []);
 
   const handleApprove = async (postId) => {
+    console.log(`🟢 Approving post ID: ${postId}`);
     try {
-      await api.put(`/admin/approve-post/${postId}`);
-      setPendingPosts(pendingPosts.filter((post) => post.id !== postId));
+      const res = await api.put(`/admin/approve-post/${postId}`);
+      console.log("✅ Post approved:", res.data);
+      setPendingPosts((prev) => prev.filter((post) => post.id !== postId));
     } catch (err) {
-      console.error(err);
+      console.error("❌ Error approving post:", err.response?.data || err.message);
     }
   };
 
   const handleDelete = async (postId) => {
+    console.log(`🗑️ Deleting post ID: ${postId}`);
     try {
-      await api.delete(`/admin/delete-post/${postId}`);
-      setPendingPosts(pendingPosts.filter((post) => post.id !== postId));
+      const res = await api.delete(`/admin/delete-post/${postId}`);
+      console.log("✅ Post deleted:", res.data);
+      setPendingPosts((prev) => prev.filter((post) => post.id !== postId));
     } catch (err) {
-      console.error(err);
+      console.error("❌ Error deleting post:", err.response?.data || err.message);
     }
   };
 
@@ -49,6 +55,9 @@ const PendingPosts = () => {
     return (
       <Box display="flex" justifyContent="center" mt={4}>
         <CircularProgress />
+        <Typography variant="body2" sx={{ ml: 2 }}>
+          Debug: Loading pending posts...
+        </Typography>
       </Box>
     );
   }
@@ -62,10 +71,16 @@ const PendingPosts = () => {
       {pendingPosts.length === 0 ? (
         <Paper elevation={0} sx={{ p: 3, textAlign: "center" }}>
           <Typography variant="body1">No posts pending approval</Typography>
+          <Typography variant="caption" color="textSecondary">
+            Debug: pendingPosts array is empty
+          </Typography>
         </Paper>
       ) : (
         pendingPosts.map((post) => (
           <Paper key={post.id} elevation={2} sx={{ p: 2, mb: 2 }}>
+            <Typography variant="caption" color="textSecondary">
+              Debug: Post ID {post.id}, created by {post.createdByUsername || "Unknown"}
+            </Typography>
             <PostItem post={post} />
             <Box display="flex" justifyContent="flex-end" gap={1} mt={1}>
               <Button
