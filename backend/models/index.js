@@ -1,8 +1,7 @@
 const { Sequelize } = require('sequelize');
 const fs = require('fs');
 const path = require('path');
-const User = require('./user')(sequelize, DataTypes);
-const Post = require('./post')(sequelize, DataTypes);
+
 require('dotenv').config();
 
 // Use DATABASE_URL from Render
@@ -37,6 +36,8 @@ Object.keys(db).forEach((modelName) => {
   }
 });
 
+const User = require('./user')(sequelize, DataTypes);
+const Post = require('./post')(sequelize, DataTypes);
 // associations
 Post.belongsTo(User, { foreignKey: 'userId' });
 User.hasMany(Post, { foreignKey: 'userId' });
