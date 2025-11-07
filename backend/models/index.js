@@ -35,6 +35,9 @@ Object.keys(db).forEach((modelName) => {
   }
 });
 
+// associations
+Post.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(Post, { foreignKey: 'userId' });
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
