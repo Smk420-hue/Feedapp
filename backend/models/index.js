@@ -1,6 +1,8 @@
 const { Sequelize } = require('sequelize');
 const fs = require('fs');
 const path = require('path');
+const User = require('./User')(sequelize, DataTypes);
+const Post = require('./Post')(sequelize, DataTypes);
 require('dotenv').config();
 
 // Use DATABASE_URL from Render
