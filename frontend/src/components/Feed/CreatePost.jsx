@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import api from '../services/api';
 
-const base_url = import.meta.env.VITE_API_BASE_URL;
+
 
 
 const CreatePost = ({ onCreate }) => {
@@ -16,20 +16,21 @@ const CreatePost = ({ onCreate }) => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!content.trim()) return;
-    
-    setLoading(true);
-    try {
-      const res = await api.post(`${base_url}/api/posts`, { content });
-      onCreate(res.data);
-      setContent('');
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  e.preventDefault();
+  if (!content.trim()) return;
+  
+  setLoading(true);
+  try {
+    const res = await api.post('/api/posts', { content });
+    onCreate(res.data);
+    setContent('');
+  } catch (err) {
+    console.error('Failed to create post:', err.response?.data || err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <Paper elevation={2} sx={{ p: 2, mb: 3 }}>
