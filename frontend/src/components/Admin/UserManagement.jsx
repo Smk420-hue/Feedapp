@@ -22,11 +22,13 @@ const UserManagement = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
+      console.log("📡 Fetching all users...");
       try {
         const res = await api.get('/admin/users');
+        console.log("✅ Users fetched:", res.data);
         setUsers(res.data);
       } catch (err) {
-        console.error(err);
+        console.error("❌ Error fetching users:", err.response?.data || err.message);
       } finally {
         setLoading(false);
       }
@@ -35,13 +37,15 @@ const UserManagement = () => {
   }, []);
 
   const handleRoleChange = async (userId, newRole) => {
+    console.log(`🔄 Changing role for user ID: ${userId} → ${newRole}`);
     try {
-      await api.put(`/admin/update-user-role/${userId}`, { role: newRole });
-      setUsers(users.map(user => 
-        user.id === userId ? { ...user, role: newRole } : user
-      ));
+      const res = await api.put(`/admin/update-user-role/${userId}`, { role: newRole });
+      console.log("✅ Role updated:", res.data);
+      setUsers((prev) => 
+        prev.map(user => user.id === userId ? { ...user, role: newRole } : user)
+      );
     } catch (err) {
-      console.error(err);
+      console.error("❌ Error updating user role:", err.response?.data || err.message);
     }
   };
 
@@ -49,6 +53,9 @@ const UserManagement = () => {
     return (
       <Box display="flex" justifyContent="center" mt={4}>
         <CircularProgress />
+        <Typography variant="body2" sx={{ ml: 2 }}>
+          Debug: Loading user list...
+        </Typography>
       </Box>
     );
   }
@@ -58,46 +65,59 @@ const UserManagement = () => {
       <Typography variant="h5" gutterBottom>
         User Management
       </Typography>
-      
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Username</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Joined</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {users.map(user => (
-              <TableRow key={user.id}>
-                <TableCell>{user.username}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>
-                  <Select
-                    value={user.role}
-                    onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                    size="small"
-                  >
-                    <MenuItem value="user">User</MenuItem>
-                    <MenuItem value="admin">Admin</MenuItem>
-                  </Select>
-                </TableCell>
-                <TableCell>
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  <Button size="small" color="error">
-                    Delete
-                  </Button>
-                </TableCell>
+
+      {users.length === 0 ? (
+        <Paper elevation={0} sx={{ p: 3, textAlign: "center" }}>
+          <Typography>No users found.</Typography>
+          <Typography variant="caption" color="textSecondary">
+            Debug: users array empty
+          </Typography>
+        </Paper>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Username</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Role</TableCell>
+                <TableCell>Joined</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {users.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>
+                    <Select
+                      value={user.role}
+                      onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                      size="small"
+                    >
+                      <MenuItem value="user">User</MenuItem>
+                      <MenuItem value="admin">Admin</MenuItem>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      size="small"
+                      color="error"
+                      onClick={() => console.log(`🚨 Delete user clicked: ${user.username}`)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Box>
   );
 };
