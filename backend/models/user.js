@@ -51,6 +51,14 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
+User.associate = (models) => {
+  User.hasMany(models.Post, {
+    foreignKey: 'userId',
+    as: 'posts',
+  });
+};
+
+
   // Instance method to validate password
   User.prototype.validPassword = async function(password) {
     return await bcrypt.compare(password, this.password);
