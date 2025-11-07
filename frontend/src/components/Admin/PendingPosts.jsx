@@ -17,7 +17,7 @@ const PendingPosts = () => {
     const fetchPendingPosts = async () => {
       console.log("📡 Fetching pending posts...");
       try {
-        const res = await api.get("/admin/pending-posts");
+        const res = await api.get("api/admin/pending-posts");
         console.log("✅ Pending posts fetched:", res.data);
         setPendingPosts(res.data);
       } catch (err) {
@@ -32,7 +32,7 @@ const PendingPosts = () => {
   const handleApprove = async (postId) => {
     console.log(`🟢 Approving post ID: ${postId}`);
     try {
-      const res = await api.put(`/admin/approve-post/${postId}`);
+      const res = await api.put(`api/admin/approve-post/${postId}`);
       console.log("✅ Post approved:", res.data);
       setPendingPosts((prev) => prev.filter((post) => post.id !== postId));
     } catch (err) {
@@ -43,7 +43,7 @@ const PendingPosts = () => {
   const handleDelete = async (postId) => {
     console.log(`🗑️ Deleting post ID: ${postId}`);
     try {
-      const res = await api.delete(`/admin/delete-post/${postId}`);
+      const res = await api.delete(`api/admin/delete-post/${postId}`);
       console.log("✅ Post deleted:", res.data);
       setPendingPosts((prev) => prev.filter((post) => post.id !== postId));
     } catch (err) {
