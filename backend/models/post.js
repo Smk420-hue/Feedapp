@@ -1,21 +1,25 @@
 module.exports = (sequelize, DataTypes) => {
-    const Post = sequelize.define('Post', {
-      content: {
-        type: DataTypes.TEXT,
-        allowNull: false
-      },
-      isApproved: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-      },
-      createdByUsername: {
-        type: DataTypes.STRING,
-        allowNull: false
-      }
-    });
-  Post.associate = (models) => {
-  Post.belongsTo(models.User, { foreignKey: 'userId' });
-};
+  const Post = sequelize.define('Post', {
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    isApproved: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    createdByUsername: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  });
 
-    return Post;
+  Post.associate = (models) => {
+    Post.belongsTo(models.User, {
+      foreignKey: 'userId',
+      as: 'user', // optional alias
+    });
   };
+
+  return Post;
+};
