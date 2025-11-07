@@ -24,7 +24,7 @@ const UserManagement = () => {
     const fetchUsers = async () => {
       console.log("📡 Fetching all users...");
       try {
-        const res = await api.get('/admin/users');
+        const res = await api.get('api/admin/users');
         console.log("✅ Users fetched:", res.data);
         setUsers(res.data);
       } catch (err) {
@@ -39,7 +39,7 @@ const UserManagement = () => {
   const handleRoleChange = async (userId, newRole) => {
     console.log(`🔄 Changing role for user ID: ${userId} → ${newRole}`);
     try {
-      const res = await api.put(`/admin/update-user-role/${userId}`, { role: newRole });
+      const res = await api.put(`api/admin/update-user-role/${userId}`, { role: newRole });
       console.log("✅ Role updated:", res.data);
       setUsers((prev) => 
         prev.map(user => user.id === userId ? { ...user, role: newRole } : user)
