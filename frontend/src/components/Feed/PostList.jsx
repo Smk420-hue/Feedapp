@@ -9,15 +9,14 @@ const PostList = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
-  const base_url = "http://localhost:5000";
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await api.get(`${base_url}/api/posts`);
+        const res = await api.get('/api/posts');
         setPosts(res.data);
       } catch (err) {
-        console.error(err);
+        console.error('Error fetching posts:', err);
       } finally {
         setLoading(false);
       }
@@ -27,28 +26,28 @@ const PostList = () => {
 
   const handleCreatePost = async (content) => {
     try {
-      const res = await api.post(`${base_url}/api/posts`, { content });
+      const res = await api.post('/api/posts', { content });
       setPosts([res.data, ...posts]);
     } catch (err) {
-      console.error(err);
+      console.error('Error creating post:', err);
     }
   };
 
   const handleDeletePost = async (postId) => {
     try {
-      await api.delete(`${base_url}/api/posts/${postId}`);
+      await api.delete(`/api/posts/${postId}`);
       setPosts(posts.filter(post => post.id !== postId));
     } catch (err) {
-      console.error(err);
+      console.error('Error deleting post:', err);
     }
   };
 
   const handleUpdatePost = async (post) => {
     try {
-      const res = await api.put(`${base_url}/api/posts${post.id}`, { content: post.content });
+      const res = await api.put(`/api/posts/${post.id}`, { content: post.content });
       setPosts(posts.map(p => p.id === post.id ? res.data : p));
     } catch (err) {
-      console.error(err);
+      console.error('Error updating post:', err);
     }
   };
 
