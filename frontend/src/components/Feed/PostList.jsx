@@ -1,3 +1,4 @@
+// ✅ PostList.jsx
 import React, { useState, useEffect, useContext } from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import api from '../services/api';
@@ -13,10 +14,10 @@ const PostList = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await api.get('/api/posts');
+        const res = await api.get(`/api/posts`);
         setPosts(res.data);
       } catch (err) {
-        console.error('Error fetching posts:', err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -24,30 +25,26 @@ const PostList = () => {
     fetchPosts();
   }, []);
 
-  const handleCreatePost = async (content) => {
-    try {
-      const res = await api.post('/api/posts', { content });
-      setPosts([res.data, ...posts]);
-    } catch (err) {
-      console.error('Error creating post:', err);
-    }
+  // ✅ Fix: this now just adds the new post to list
+  const handleCreatePost = (newPost) => {
+    setPosts([newPost, ...posts]);
   };
 
   const handleDeletePost = async (postId) => {
     try {
       await api.delete(`/api/posts/${postId}`);
-      setPosts(posts.filter(post => post.id !== postId));
+      setPosts(posts.filter((post) => post.id !== postId));
     } catch (err) {
-      console.error('Error deleting post:', err);
+      console.error(err);
     }
   };
 
   const handleUpdatePost = async (post) => {
     try {
       const res = await api.put(`/api/posts/${post.id}`, { content: post.content });
-      setPosts(posts.map(p => p.id === post.id ? res.data : p));
+      setPosts(posts.map((p) => (p.id === post.id ? res.data : p)));
     } catch (err) {
-      console.error('Error updating post:', err);
+      console.error(err);
     }
   };
 
@@ -67,7 +64,7 @@ const PostList = () => {
           No posts available
         </Typography>
       ) : (
-        posts.map(post => (
+        posts.map((post) => (
           <PostItem
             key={post.id}
             post={post}
