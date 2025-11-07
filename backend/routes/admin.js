@@ -22,13 +22,14 @@ router.get('/pending-posts', adminCheck, async (req, res) => {
       }]
     });
 
-    res.json(posts.map(post => ({
-      id: post.id,
-      content: post.content,
-      createdAt: post.createdAt,
-      createdByUsername: post.User.username,
-      createdByEmail: post.User.email
-    })));
+   res.json(posts.map(post => ({
+  id: post.id,
+  content: post.content,
+  createdAt: post.createdAt,
+  createdByUsername: post.User ? post.User.username : 'Unknown',
+  createdByEmail: post.User ? post.User.email : 'N/A'
+})));
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
