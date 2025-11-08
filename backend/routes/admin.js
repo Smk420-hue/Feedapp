@@ -10,6 +10,7 @@ const adminCheck = (req, res, next) => {
   next();
 };
 
+
 // Get all pending posts for approval
 router.get('/pending-posts', adminCheck, async (req, res) => {
   try {
@@ -22,18 +23,30 @@ router.get('/pending-posts', adminCheck, async (req, res) => {
       }]
     });
 
-   res.json(posts.map(post => ({
-  id: post.id,
-  content: post.content,
-  createdAt: post.createdAt,
-  createdByUsername: post.User ? post.User.username : 'Unknown',
-  createdByEmail: post.User ? post.User.email : 'N/A'
-})));
+    // Debug log (safe for production)
+    console.log(`📊 Found ${posts.length} pending posts`);
 
+    const formattedPosts = posts.map(post => {
+      if (!post.User) {
+        console.warn(`⚠️ Post ${post.id} has no associated User (userId=${post.userId})`);
+      }
+
+      return {
+        id: post.id,
+        content: post.content,
+        createdAt: post.createdAt,
+        createdByUsername: post.User ? post.User.username : 'Unknown',
+        createdByEmail: post.User ? post.User.email : 'N/A'
+      };
+    });
+
+    res.json(formattedPosts);
   } catch (error) {
+    console.error('❌ Error in /pending-posts:', error);
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // Approve a post
 router.put('/approve-post/:id', adminCheck, async (req, res) => {
